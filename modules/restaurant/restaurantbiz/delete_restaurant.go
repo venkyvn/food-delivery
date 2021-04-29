@@ -1,6 +1,8 @@
 package restaurantbiz
 
-import "context"
+import (
+	"context"
+)
 
 type DeleteRestaurantStore interface {
 	FindDateByCondition(
@@ -17,10 +19,4 @@ type DeleteRestaurantStore interface {
 
 type deleteRestaurantBiz struct {
 	store DeleteRestaurantStore
-}
-
-func NewDeleteRestaurantBiz(store DeleteRestaurantStore) *deleteRestaurantBiz {
-	return &deleteRestaurantBiz{
-		store: store,
-	}
 }

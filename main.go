@@ -29,7 +29,7 @@ func main() {
 type Restaurant struct {
 	Id   int    `json:"id" gorm:"column:id;"`
 	Name string `json:"name" gorm:"name;"`
-	Addr string `json:"addr" gorm:"addr;"`
+	Addr string `json:"address" gorm:"addr;"`
 }
 
 func (Restaurant) TableName() string {
@@ -42,7 +42,7 @@ func (RestaurantUpdate) TableName() string {
 
 type RestaurantUpdate struct {
 	Name *string `json:"name" gorm:"column:name;"`
-	Addr *string `json:"addr" gorm:"column:addr;"`
+	Addr *string `json:"address" gorm:"column:addr;"`
 }
 
 func runService(db *gorm.DB) error {
@@ -60,7 +60,8 @@ func runService(db *gorm.DB) error {
 	restaurants := r.Group("/restaurants")
 	{
 
-		restaurants.GET("", ginrestaurant.GetRestaurant(appCtx))
+		restaurants.GET("", ginrestaurant.ListRestaurant(appCtx))
+		restaurants.GET("/:id", ginrestaurant.GetRestaurant(appCtx))
 		restaurants.POST("", ginrestaurant.CreateRestaurant(appCtx))
 
 		restaurants.PATCH("/:id", func(c *gin.Context) {
