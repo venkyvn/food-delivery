@@ -53,7 +53,6 @@ func NewCustomError(root error, msg, key string) *AppError {
 
 func (e *AppError) Error() string {
 	return e.RootError().Error()
-
 }
 
 func (e *AppError) RootError() error {

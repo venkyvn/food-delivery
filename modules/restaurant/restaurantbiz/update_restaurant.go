@@ -2,7 +2,7 @@ package restaurantbiz
 
 import (
 	"context"
-	"errors"
+	"go-food-delivery/common"
 	"go-food-delivery/modules/restaurant/restaurantmodel"
 )
 
@@ -36,7 +36,7 @@ func (biz *updateRestaurantBiz) UpdateRestaurant(ctx context.Context, id int, da
 	}
 
 	if oldData.Status == 0 {
-		return errors.New("data deleted")
+		return common.ErrEntityDeleted(restaurantmodel.EntityName, nil)
 	}
 
 	if err := biz.store.UpdateData(ctx, id, data); err != nil {

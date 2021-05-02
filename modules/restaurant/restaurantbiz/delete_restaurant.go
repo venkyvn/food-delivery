@@ -2,7 +2,7 @@ package restaurantbiz
 
 import (
 	"context"
-	"errors"
+	"go-food-delivery/common"
 	"go-food-delivery/modules/restaurant/restaurantmodel"
 )
 
@@ -37,7 +37,7 @@ func (biz *deleteRestaurantBiz) DeleteRestaurant(ctx context.Context, id int) er
 	}
 
 	if oldData.Status == 0 {
-		return errors.New("data deleted")
+		return common.ErrEntityDeleted(restaurantmodel.EntityName, nil)
 	}
 
 	if err = biz.store.SoftDeleteData(ctx, id); err != nil {
