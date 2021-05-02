@@ -5,13 +5,15 @@ import (
 	"go-food-delivery/common"
 	"go-food-delivery/component"
 	"go-food-delivery/modules/restaurant/restaurantbiz"
+	"go-food-delivery/modules/restaurant/restaurantmodel"
 	"go-food-delivery/modules/restaurant/restaurantstorage"
 	"net/http"
 	"strconv"
 )
 
-func DeleteRestaurant(appCtx component.AppContext) gin.HandlerFunc {
+func UpdateRestaurant(appCtx component.AppContext) gin.HandlerFunc {
 	return func(c *gin.Context) {
+
 		id, err := strconv.Atoi(c.Param("id"))
 
 		if err != nil {
@@ -20,11 +22,19 @@ func DeleteRestaurant(appCtx component.AppContext) gin.HandlerFunc {
 			})
 			return
 		}
+		var data restaurantmodel.RestaurantUpdate
+
+		if err := c.ShouldBind(&data); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"error": err.Error(),
+			})
+			return
+		}
 
 		store := restaurantstorage.NewSQLStore(appCtx.GetMainDBConnection())
-		biz := restaurantbiz.NewDeleteRestaurantBiz(store)
+		biz := restaurantbiz.NewUpdateRestaurantBiz(store)
 
-		if err := biz.DeleteRestaurant(c.Request.Context(), id); err != nil {
+		if err := biz.UpdateRestaurant(c.Request.Context(), id, &data); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"error": err.Error(),
 			})

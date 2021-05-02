@@ -7,7 +7,8 @@ import (
 )
 
 type GetRestaurantStore interface {
-	FindDataByCollection(ctx context.Context,
+	FindDataByCondition(
+		ctx context.Context,
 		condition map[string]interface{},
 		moreKeys ...string,
 	) (*restaurantmodel.Restaurant, error)
@@ -22,7 +23,7 @@ func NewGetRestaurantBiz(store GetRestaurantStore) *getRestaurantBiz {
 }
 
 func (biz *getRestaurantBiz) GetRestaurant(ctx context.Context, id int) (*restaurantmodel.Restaurant, error) {
-	data, err := biz.store.FindDataByCollection(ctx, map[string]interface{}{"id": id})
+	data, err := biz.store.FindDataByCondition(ctx, map[string]interface{}{"id": id})
 
 	if err != nil {
 		if err != common.RecordNotFound {

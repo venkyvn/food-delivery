@@ -6,30 +6,29 @@ import (
 	"go-food-delivery/modules/restaurant/restaurantmodel"
 )
 
-type DeleteRestaurantStorage interface {
+type UpdateRestaurantStorage interface {
 	FindDataByCondition(
 		ctx context.Context,
 		condition map[string]interface{},
 		moreKeys ...string,
 	) (*restaurantmodel.Restaurant, error)
 
-	SoftDeleteData(
+	UpdateData(
 		ctx context.Context,
 		id int,
+		data *restaurantmodel.RestaurantUpdate,
 	) error
 }
 
-type deleteRestaurantBiz struct {
-	store DeleteRestaurantStorage
+type updateRestaurantBiz struct {
+	store UpdateRestaurantStorage
 }
 
-func NewDeleteRestaurantBiz(store DeleteRestaurantStorage) *deleteRestaurantBiz {
-	return &deleteRestaurantBiz{
-		store: store,
-	}
+func NewUpdateRestaurantBiz(store UpdateRestaurantStorage) *updateRestaurantBiz {
+	return &updateRestaurantBiz{store: store}
 }
 
-func (biz *deleteRestaurantBiz) DeleteRestaurant(ctx context.Context, id int) error {
+func (biz *updateRestaurantBiz) UpdateRestaurant(ctx context.Context, id int, data *restaurantmodel.RestaurantUpdate) error {
 	oldData, err := biz.store.FindDataByCondition(ctx, map[string]interface{}{"id": id})
 
 	if err != nil {
@@ -40,9 +39,10 @@ func (biz *deleteRestaurantBiz) DeleteRestaurant(ctx context.Context, id int) er
 		return errors.New("data deleted")
 	}
 
-	if err = biz.store.SoftDeleteData(ctx, id); err != nil {
+	if err := biz.store.UpdateData(ctx, id, data); err != nil {
 		return err
 	}
 
 	return nil
+
 }
