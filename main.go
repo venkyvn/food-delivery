@@ -53,7 +53,6 @@ func runService(db *gorm.DB, provider uploadprovider.UploadProvider) error {
 
 	restaurants := r.Group("/restaurants")
 	{
-
 		restaurants.GET("", ginrestaurant.ListRestaurant(appCtx))
 		restaurants.GET("/:id", ginrestaurant.GetRestaurant(appCtx))
 		restaurants.POST("", ginrestaurant.CreateRestaurant(appCtx))

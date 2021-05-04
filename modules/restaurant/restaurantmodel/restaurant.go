@@ -53,3 +53,7 @@ func (res *RestaurantCreate) Validate() error {
 var (
 	ErrNameCannotBeEmpTy = common.NewCustomError(nil, "restaurant name cannot be blank", "ErrNameCannotBeEmpty")
 )
+
+func (r *Restaurant) Mask(isAdminOrOwner bool) {
+	r.GenUID(common.DbTypeRestaurant)
+}
