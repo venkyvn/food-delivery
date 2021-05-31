@@ -7,6 +7,7 @@ import (
 	"go-food-delivery/modules/restaurant/restaurantbiz"
 	"go-food-delivery/modules/restaurant/restaurantmodel"
 	"go-food-delivery/modules/restaurant/restaurantstorage"
+	restaurantlikestorage "go-food-delivery/modules/restaurantlike/storage"
 	"net/http"
 )
 
@@ -26,7 +27,8 @@ func ListRestaurant(ctx component.AppContext) gin.HandlerFunc {
 		paging.Fulfill()
 
 		store := restaurantstorage.NewSQLStore(ctx.GetMainDBConnection())
-		biz := restaurantbiz.NewListRestaurantBiz(store)
+		resLikeStore := restaurantlikestorage.NewSqlStore(ctx.GetMainDBConnection())
+		biz := restaurantbiz.NewListRestaurantBiz(store, resLikeStore)
 
 		result, err := biz.ListDataByCondition(c.Request.Context(), &filter, &paging)
 

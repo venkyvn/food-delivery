@@ -4,10 +4,12 @@ import (
 	"context"
 	"go-food-delivery/common"
 	"go-food-delivery/modules/restaurant/restaurantmodel"
+	"log"
 )
 
 type ListRestaurantStorage interface {
-	ListDataByCondition(ctx context.Context,
+	ListDataByCondition(
+		ctx context.Context,
 		conditions map[string]interface{},
 		filter *restaurantmodel.Filter,
 		paging *common.Paging,
@@ -15,13 +17,22 @@ type ListRestaurantStorage interface {
 	) ([]restaurantmodel.Restaurant, error)
 }
 
-type listRestaurantBiz struct {
-	store ListRestaurantStorage
+type RestaurantLikeStorage interface {
+	FetchRestaurantLike(
+		ctx context.Context,
+		ids []int,
+	) (map[int]int, error)
 }
 
-func NewListRestaurantBiz(store ListRestaurantStorage) *listRestaurantBiz {
+type listRestaurantBiz struct {
+	store               ListRestaurantStorage
+	restaurantLikeStore RestaurantLikeStorage
+}
+
+func NewListRestaurantBiz(store ListRestaurantStorage, restaurantLikeStore RestaurantLikeStorage) *listRestaurantBiz {
 	return &listRestaurantBiz{
-		store: store,
+		store:               store,
+		restaurantLikeStore: restaurantLikeStore,
 	}
 }
 
@@ -33,5 +44,27 @@ func (biz *listRestaurantBiz) ListDataByCondition(
 
 	result, err := biz.store.ListDataByCondition(ctx, nil, filter, paging)
 
-	return result, err
+	if err != nil {
+		return nil, common.ErrCannotGetEntity(restaurantmodel.EntityName, err)
+	}
+
+	ids := make([]int, len(result))
+
+	for i := range result {
+		ids[i] = result[i].Id
+	}
+
+	resLikeMap, err := biz.restaurantLikeStore.FetchRestaurantLike(ctx, ids)
+
+	if err != nil {
+		log.Printf("cannot fetch restaurant like")
+	}
+
+	if resLikeMap != nil {
+		for i := range result {
+			result[i].LikedCount = resLikeMap[result[i].Id]
+		}
+	}
+
+	return result, nil
 }
