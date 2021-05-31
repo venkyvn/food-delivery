@@ -32,10 +32,23 @@ func (s *sqlStore) ListDataByCondition(ctx context.Context,
 		return nil, common.ErrDB(err)
 	}
 
+	// if next currsor != nil => db.find().where id > next cursor . limit ()
+	// json.next cursor = result [result.size > 0 ? result.[size-1].id]
+
 	var result []restaurantmodel.Restaurant
 
+	if paging.FakeCursor != "" {
+		//order by id desc => where id < uid.
+		if uid, err := common.FromBase58(paging.FakeCursor); err == nil {
+			db.Where("id < ?", uid.GetLocalID())
+		} else {
+			db.Offset((paging.Page - 1) * paging.Limit)
+		}
+	} else {
+		db.Offset((paging.Page - 1) * paging.Limit)
+	}
+
 	if err := db.
-		Offset((paging.Page - 1) * paging.Limit).
 		Limit(paging.Limit).
 		Order("id DESC").
 		Find(&result).Error; err != nil {

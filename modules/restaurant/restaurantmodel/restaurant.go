@@ -16,18 +16,19 @@ type Restaurant struct {
 }
 
 type RestaurantUpdate struct {
-	Name  *string        `json:"name" gorm:"column:name;"`
-	Addr  *string        `json:"address" gorm:"column:addr;"`
-	Logo  *common.Image  `json:"logo" gorm:"column:logo;"`
-	Cover *common.Images `json:"cover" gorm:"column:cover;"`
+	common.SQLModel `json:",inline"`
+	Name            *string        `json:"name" gorm:"column:name;"`
+	Addr            *string        `json:"address" gorm:"column:addr;"`
+	Logo            *common.Image  `json:"logo" gorm:"column:logo;"`
+	Cover           *common.Images `json:"cover" gorm:"column:cover;"`
 }
 
 type RestaurantCreate struct {
-	Id    int            `json:"id" gorm:"column:id;"`
-	Name  string         `json:"name" gorm:"column:name;"`
-	Addr  string         `json:"address" gorm:"column:addr;"`
-	Logo  *common.Image  `json:"logo" gorm:"column:logo;"`
-	Cover *common.Images `json:"cover" gorm:"column:cover;"`
+	common.SQLModel `json:",inline"`
+	Name            string         `json:"name" gorm:"column:name;"`
+	Addr            string         `json:"address" gorm:"column:addr;"`
+	Logo            *common.Image  `json:"logo" gorm:"column:logo;"`
+	Cover           *common.Images `json:"cover" gorm:"column:cover;"`
 }
 
 func (Restaurant) TableName() string {
@@ -55,5 +56,13 @@ var (
 )
 
 func (r *Restaurant) Mask(isAdminOrOwner bool) {
+	r.GenUID(common.DbTypeRestaurant)
+}
+
+func (r *RestaurantCreate) Mask(isAdminOrOwner bool) {
+	r.GenUID(common.DbTypeRestaurant)
+}
+
+func (r *RestaurantUpdate) Mask(isAdminOrOwner bool) {
 	r.GenUID(common.DbTypeRestaurant)
 }

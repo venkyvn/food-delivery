@@ -9,13 +9,13 @@
 			"name": "restaurant",
 			"item": [
 				{
-					"name": "update",
+					"name": "Update Restaurant",
 					"request": {
 						"method": "PATCH",
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"name\" : \"vuong 2\"\n}",
+							"raw": "{\n    \"name\" : \"latest\",\n    \"address\":\"address updated\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -34,7 +34,7 @@
 							"variable": [
 								{
 									"key": "id",
-									"value": "1"
+									"value": "e532sJ4XpCi8"
 								}
 							]
 						}
@@ -48,7 +48,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"name\" : \"vuong 2\"\n}",
+							"raw": "{\n    \"name\": \"haidilao\",\n    \"address\": \"bitexco\",\n    \"logo\": {\n        \"id\": 0,\n        \"ownerId\": 1,\n        \"url\": \"https://d24hudxqtwv04p.cloudfront.net/img/621642000.png\",\n        \"width\": 1728,\n        \"height\": 1728,\n        \"cloud_name\": \"s3\",\n        \"extension\": \".png\"\n    },\n    \"cover\": [\n        {\n            \"id\": 0,\n            \"url\": \"https://d24hudxqtwv04p.cloudfront.net/img/267452000.jpeg\",\n            \"width\": 550,\n            \"height\": 389,\n            \"cloud_name\": \"s3\",\n            \"extension\": \".jpeg\"\n        },\n        {\n            \"id\": 0,\n            \"url\": \"https://d24hudxqtwv04p.cloudfront.net/img/414698000.jpeg\",\n            \"width\": 800,\n            \"height\": 400,\n            \"cloud_name\": \"s3\",\n            \"extension\": \".jpeg\"\n        }\n    ]\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -82,19 +82,13 @@
 							}
 						},
 						"url": {
-							"raw": "{{DOMAIN}}/restaurants/:id",
+							"raw": "{{DOMAIN}}/restaurants/e532sJ4XpCi8",
 							"host": [
 								"{{DOMAIN}}"
 							],
 							"path": [
 								"restaurants",
-								":id"
-							],
-							"variable": [
-								{
-									"key": "id",
-									"value": "1"
-								}
+								"e532sJ4XpCi8"
 							]
 						}
 					},
@@ -110,7 +104,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\n}",
+							"raw": "{}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -118,7 +112,7 @@
 							}
 						},
 						"url": {
-							"raw": "{{DOMAIN}}/restaurants?city_id=2",
+							"raw": "{{DOMAIN}}/restaurants?limit=4&cursor=e532sJ4XpCi8",
 							"host": [
 								"{{DOMAIN}}"
 							],
@@ -128,7 +122,21 @@
 							"query": [
 								{
 									"key": "city_id",
-									"value": "2"
+									"value": "2",
+									"disabled": true
+								},
+								{
+									"key": "page",
+									"value": "2",
+									"disabled": true
+								},
+								{
+									"key": "limit",
+									"value": "4"
+								},
+								{
+									"key": "cursor",
+									"value": "e532sJ4XpCi8"
 								}
 							]
 						}
@@ -153,12 +161,19 @@
 							}
 						},
 						"url": {
-							"raw": "{{DOMAIN}}/restaurants",
+							"raw": "{{DOMAIN}}/restaurants/:id",
 							"host": [
 								"{{DOMAIN}}"
 							],
 							"path": [
-								"restaurants"
+								"restaurants",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "3mHP8w4uUmdf5t"
+								}
 							]
 						}
 					},
@@ -178,6 +193,46 @@
 					],
 					"path": [
 						"ping"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Upload",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "file",
+							"type": "file",
+							"src": "/Users/venky/Downloads/186322201_10223506578506411_6616922907301143025_n.jpeg"
+						},
+						{
+							"key": "",
+							"type": "file",
+							"src": [],
+							"disabled": true
+						}
+					]
+				},
+				"url": {
+					"raw": "{{DOMAIN}}/upload",
+					"host": [
+						"{{DOMAIN}}"
+					],
+					"path": [
+						"upload"
+					],
+					"query": [
+						{
+							"key": "file",
+							"value": null,
+							"disabled": true
+						}
 					]
 				}
 			},
