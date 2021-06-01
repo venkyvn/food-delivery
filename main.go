@@ -7,6 +7,7 @@ import (
 	"go-food-delivery/middleware"
 	"go-food-delivery/modules/restaurant/restauranttransport/ginrestaurant"
 	"go-food-delivery/modules/upload/uploadtransport/ginupload"
+	"go-food-delivery/modules/user/usertransport/ginuser"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 	"log"
@@ -50,6 +51,7 @@ func runService(db *gorm.DB, provider uploadprovider.UploadProvider) error {
 	})
 
 	r.POST("/upload", ginupload.Upload(appCtx))
+	r.POST("/register", ginuser.Register(appCtx))
 
 	restaurants := r.Group("/restaurants")
 	{
