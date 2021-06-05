@@ -6,7 +6,7 @@ import (
 	"go-food-delivery/modules/user/usermodel"
 )
 
-func (s *sqlStore) FindUser(ctx context.Context, conditions map[string]string, moreKeys ...string) (*usermodel.User, error) {
+func (s *sqlStore) FindUser(ctx context.Context, conditions map[string]interface{}, moreKeys ...string) (*usermodel.User, error) {
 	db := s.db.Table(usermodel.User{}.TableName())
 
 	for i := range moreKeys {

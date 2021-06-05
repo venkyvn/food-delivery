@@ -28,6 +28,8 @@ func Register(appCtx component.AppContext) func(*gin.Context) {
 			panic(err)
 		}
 
+		data.Mask(false)
+
 		c.JSON(http.StatusOK, common.SimpleSuccessResponse(data))
 	}
 }

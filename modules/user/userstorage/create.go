@@ -7,9 +7,15 @@ import (
 )
 
 func (s *sqlStore) Create(ctx context.Context, user *usermodel.UserCreate) error {
-	db := s.db
+	db := s.db.Begin()
 
-	if err := db.Create(&user).Error; err != nil {
+	if err := db.Table(user.TableName()).Create(user).Error; err != nil {
+		db.Rollback()
+		return common.ErrDB(err)
+	}
+
+	if err := db.Commit().Error; err != nil {
+		db.Rollback()
 		return common.ErrDB(err)
 	}
 
