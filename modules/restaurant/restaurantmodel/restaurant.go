@@ -2,6 +2,7 @@ package restaurantmodel
 
 import (
 	"go-food-delivery/common"
+	"go-food-delivery/modules/user/usermodel"
 	"strings"
 )
 
@@ -9,12 +10,13 @@ const EntityName = "Restaurant"
 
 type Restaurant struct {
 	common.SQLModel `json:",inline"`
-	Name            string         `json:"name" gorm:"column:name;"`
-	OwnerId         int            `json:"-" gorm:"column:owner_id;"`
-	Addr            string         `json:"address" gorm:"column:addr;"`
-	Logo            *common.Image  `json:"logo" gorm:"column:logo;"`
-	Cover           *common.Images `json:"cover" gorm:"column:cover;"`
-	LikedCount      int            `json:"liked_count" gorm:"-"`
+	Name            string          `json:"name" gorm:"column:name;"`
+	UserId          int             `json:"-" gorm:"column:owner_id;"`
+	User            *usermodel.User `json:"user" gorm:"preload:false;"`
+	Addr            string          `json:"address" gorm:"column:addr;"`
+	Logo            *common.Image   `json:"logo" gorm:"column:logo;"`
+	Cover           *common.Images  `json:"cover" gorm:"column:cover;"`
+	LikedCount      int             `json:"liked_count" gorm:"-"`
 }
 
 type RestaurantUpdate struct {
@@ -28,7 +30,7 @@ type RestaurantUpdate struct {
 type RestaurantCreate struct {
 	common.SQLModel `json:",inline"`
 	Name            string         `json:"name" gorm:"column:name;"`
-	OwnerId         int            `json:"-" gorm:"column:owner_id;"`
+	UserId          int            `json:"-" gorm:"column:owner_id;"`
 	Addr            string         `json:"address" gorm:"column:addr;"`
 	Logo            *common.Image  `json:"logo" gorm:"column:logo;"`
 	Cover           *common.Images `json:"cover" gorm:"column:cover;"`

@@ -19,6 +19,7 @@ import (
 func main() {
 	dsn := os.Getenv("DBConnectionStr")
 	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
+	db = db.Debug()
 
 	s3BucketName := os.Getenv("S3BucketName")
 	s3Region := os.Getenv("S3Region")
