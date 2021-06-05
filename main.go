@@ -25,6 +25,7 @@ func main() {
 	s3APIKey := os.Getenv("S3APIKey")
 	s3SecretKey := os.Getenv("S3SecretKey")
 	s3Domain := os.Getenv("S3Domain")
+	secretKey := os.Getenv("SecretKey")
 
 	s3Provider := uploadprovider.NewS3Provider(s3BucketName, s3Region, s3APIKey, s3SecretKey, s3Domain)
 
@@ -32,14 +33,14 @@ func main() {
 		log.Fatalln(err)
 	}
 
-	if err := runService(db, s3Provider); err != nil {
+	if err := runService(db, s3Provider, secretKey); err != nil {
 		log.Fatalln(err)
 	}
 }
 
-func runService(db *gorm.DB, provider uploadprovider.UploadProvider) error {
+func runService(db *gorm.DB, provider uploadprovider.UploadProvider, secretKey string) error {
 
-	appCtx := component.NewAppContext(db, provider)
+	appCtx := component.NewAppContext(db, provider, secretKey)
 
 	r := gin.Default()
 	r.Use(middleware.Recover(appCtx))
@@ -50,10 +51,13 @@ func runService(db *gorm.DB, provider uploadprovider.UploadProvider) error {
 		})
 	})
 
-	r.POST("/upload", ginupload.Upload(appCtx))
-	r.POST("/register", ginuser.Register(appCtx))
+	v1 := r.Group("/v1")
 
-	restaurants := r.Group("/restaurants")
+	v1.POST("/upload", ginupload.Upload(appCtx))
+	v1.POST("/register", ginuser.Register(appCtx))
+	v1.POST("/login", ginuser.Login(appCtx))
+
+	restaurants := v1.Group("/restaurants")
 	{
 		restaurants.GET("", ginrestaurant.ListRestaurant(appCtx))
 		restaurants.GET("/:id", ginrestaurant.GetRestaurant(appCtx))

@@ -10,12 +10,12 @@ const EntityName = "user"
 type User struct {
 	common.SQLModel `json:",inline"`
 	Email           string        `json:"email" gorm:"column:email;"`
-	Password        string        `json:"password" gorm:"column:password;"`
+	Password        string        `json:"-" gorm:"column:password;"`
+	Salt            string        `json:"-" gorm:"column:salt;"`
 	FirstName       string        `json:"first_name" gorm:"column:first_name;"`
 	LastName        string        `json:"last_name" gorm:"column:last_name;"`
 	Phone           string        `json:"phone" gorm:"column:phone"`
 	Role            string        `json:"-" gorm:"column:role"`
-	Salt            string        `json:"-" gorm:"column:salt;"`
 	Avatar          *common.Image `json:"avatar,omitempty" gorm:"avatar;"`
 }
 
@@ -26,17 +26,30 @@ func (User) TableName() string {
 type UserCreate struct {
 	common.SQLModel `json:",inline"`
 	Email           string        `json:"email" gorm:"column:email;"`
-	Password        string        `json:"password" gorm:"column:password;"`
+	Password        string        `json:"-" gorm:"column:password;"`
+	Salt            string        `json:"-" gorm:"column:salt;"`
 	FirstName       string        `json:"first_name" gorm:"column:first_name;"`
 	LastName        string        `json:"last_name" gorm:"column:last_name;"`
 	Phone           string        `json:"phone" gorm:"column:phone"`
 	Role            string        `json:"-" gorm:"column:role"`
-	Salt            string        `json:"-" gorm:"column:salt;"`
 	Avatar          *common.Image `json:"avatar,omitempty" gorm:"avatar;"`
 }
 
+type UserLogin struct {
+	Email    string `json:"email" form:"email" gorm:"column:email;"`
+	Password string `json:"password" form:"password"`
+}
+
+func (u *User) Mask(isAdminOrOwner bool) {
+	u.GenUID(common.DbTypeUser)
+}
+
+func (u *UserCreate) Mask(isAdminOrOwner bool) {
+	u.GenUID(common.DbTypeUser)
+}
+
 func (UserCreate) TableName() string {
-	return "users"
+	return User{}.TableName()
 }
 
 var (
@@ -44,5 +57,11 @@ var (
 		errors.New("email has already existed"),
 		"email has already existed",
 		"ErrEmailExisted",
+	)
+
+	ErrUsernameOrPasswordInvalid = common.NewCustomError(
+		errors.New("username or password invalid"),
+		"username or password invalid",
+		"ErrUsernameOrPasswordInvalid",
 	)
 )
