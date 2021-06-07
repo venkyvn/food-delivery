@@ -2,7 +2,6 @@ package restaurantmodel
 
 import (
 	"go-food-delivery/common"
-	"go-food-delivery/modules/user/usermodel"
 	"strings"
 )
 
@@ -10,13 +9,13 @@ const EntityName = "Restaurant"
 
 type Restaurant struct {
 	common.SQLModel `json:",inline"`
-	Name            string          `json:"name" gorm:"column:name;"`
-	UserId          int             `json:"-" gorm:"column:owner_id;"`
-	User            *usermodel.User `json:"user" gorm:"preload:false;"`
-	Addr            string          `json:"address" gorm:"column:addr;"`
-	Logo            *common.Image   `json:"logo" gorm:"column:logo;"`
-	Cover           *common.Images  `json:"cover" gorm:"column:cover;"`
-	LikedCount      int             `json:"liked_count" gorm:"-"`
+	Name            string             `json:"name" gorm:"column:name;"`
+	UserId          int                `json:"-" gorm:"column:owner_id;"`
+	User            *common.SimpleUser `json:"user" gorm:"preload:false;"`
+	Addr            string             `json:"address" gorm:"column:addr;"`
+	Logo            *common.Image      `json:"logo" gorm:"column:logo;"`
+	Cover           *common.Images     `json:"cover" gorm:"column:cover;"`
+	LikedCount      int                `json:"liked_count" gorm:"-"`
 }
 
 type RestaurantUpdate struct {
@@ -62,6 +61,10 @@ var (
 
 func (r *Restaurant) Mask(isAdminOrOwner bool) {
 	r.GenUID(common.DbTypeRestaurant)
+
+	if u := r.User; u != nil {
+		u.Mask(false)
+	}
 }
 
 func (r *RestaurantCreate) Mask(isAdminOrOwner bool) {

@@ -6,6 +6,7 @@ import (
 	"go-food-delivery/component/uploadprovider"
 	"go-food-delivery/middleware"
 	"go-food-delivery/modules/restaurant/restauranttransport/ginrestaurant"
+	"go-food-delivery/modules/restaurantlike/transport/gin"
 	"go-food-delivery/modules/upload/uploadtransport/ginupload"
 	"go-food-delivery/modules/user/usertransport/ginuser"
 	"gorm.io/driver/mysql"
@@ -66,6 +67,7 @@ func runService(db *gorm.DB, provider uploadprovider.UploadProvider, secretKey s
 		restaurants.POST("", ginrestaurant.CreateRestaurant(appCtx))
 		restaurants.PATCH("/:id", ginrestaurant.UpdateRestaurant(appCtx))
 		restaurants.DELETE("/:id", ginrestaurant.DeleteRestaurant(appCtx))
+		restaurants.GET("/:id/liked-user", ginrestaurantliked.GetUserLikedRestaurant(appCtx))
 	}
 
 	return r.Run()

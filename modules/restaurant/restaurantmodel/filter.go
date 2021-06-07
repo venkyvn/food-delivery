@@ -1,5 +1,5 @@
 package restaurantmodel
 
 type Filter struct {
-	CityId int `json:"city_id,omitempty" form:"city_id"`
+	CityId int `json:"-" form:"city_id"`
 }

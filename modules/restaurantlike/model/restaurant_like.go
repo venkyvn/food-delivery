@@ -1,11 +1,17 @@
 package restaurantlikemodel
 
-import "time"
+import (
+	"go-food-delivery/common"
+	"time"
+)
+
+const EntityName = "RestaurantLike"
 
 type RestaurantLike struct {
-	restaurantId int        `json:"restaurant_id" gorm:"column:restaurant_id;"`
-	userId       int        `json:"user_id" gorm:"column:user_id;"`
-	createdAt    *time.Time `json:"created_at" gorm:"column:created_at;"`
+	RestaurantId int                `json:"restaurant_id" gorm:"column:restaurant_id;"`
+	UserId       int                `json:"user_id" gorm:"column:user_id;"`
+	CreatedAt    *time.Time         `json:"created_at" gorm:"column:created_at;"`
+	User         *common.SimpleUser `json:"user" gorm:"preload:false"`
 }
 
 func (RestaurantLike) TableName() string {
