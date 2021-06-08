@@ -21,6 +21,7 @@ func GetRestaurant(appCtx component.AppContext) gin.HandlerFunc {
 		store := restaurantstorage.NewSQLStore(appCtx.GetMainDBConnection())
 		biz := restaurantbiz.NewGetRestaurantBiz(store)
 
+		//data, err := biz.GetRestaurant(c.Request.Context(), id)
 		data, err := biz.GetRestaurant(c.Request.Context(), int(uid.GetLocalID()))
 
 		if err != nil {
