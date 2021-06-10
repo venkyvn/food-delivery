@@ -9,6 +9,8 @@ import (
 	"go-food-delivery/modules/restaurantlike/transport/gin"
 	"go-food-delivery/modules/upload/uploadtransport/ginupload"
 	"go-food-delivery/modules/user/usertransport/ginuser"
+	"go-food-delivery/pubsub/pubsublocal"
+	"go-food-delivery/subscriber"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 	"log"
@@ -42,7 +44,9 @@ func main() {
 
 func runService(db *gorm.DB, provider uploadprovider.UploadProvider, secretKey string) error {
 
-	appCtx := component.NewAppContext(db, provider, secretKey)
+	pubSub := pubsublocal.NewLocalPubSub()
+	appCtx := component.NewAppContext(db, provider, secretKey, pubSub)
+	subscriber.Setup(appCtx)
 
 	r := gin.Default()
 	r.Use(middleware.Recover(appCtx))

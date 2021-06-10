@@ -3,9 +3,8 @@ package restaurantlikedbiz
 import (
 	"context"
 	"go-food-delivery/common"
-	"go-food-delivery/component/asyncjob"
 	"go-food-delivery/modules/restaurantlike/model"
-	"log"
+	"go-food-delivery/pubsub"
 )
 
 type LikeRestaurantStorage interface {
@@ -13,19 +12,25 @@ type LikeRestaurantStorage interface {
 	Create(ctx context.Context, data *restaurantlikemodel.RestaurantLike) error
 }
 
-type IncreaseLikeCountStorage interface {
-	IncreaseLikeCount(ctx context.Context, restaurantId int) error
-}
+//type IncreaseLikeCountStorage interface {
+//	IncreaseLikeCount(ctx context.Context, restaurantId int) error
+//}
 
 type likeRestaurantBiz struct {
-	store         LikeRestaurantStorage
-	increaseStore IncreaseLikeCountStorage
+	store LikeRestaurantStorage
+	//increaseStore IncreaseLikeCountStorage
+	pubSub pubsub.PubSub
 }
 
-func NewUserLikeRestaurantBiz(store LikeRestaurantStorage, increaseStore IncreaseLikeCountStorage) *likeRestaurantBiz {
+func NewUserLikeRestaurantBiz(
+	store LikeRestaurantStorage,
+	//increaseStore IncreaseLikeCountStorage,
+	pubSub pubsub.PubSub,
+) *likeRestaurantBiz {
 	return &likeRestaurantBiz{
-		store:         store,
-		increaseStore: increaseStore,
+		store: store,
+		//increaseStore: increaseStore,
+		pubSub: pubSub,
 	}
 }
 
@@ -44,16 +49,18 @@ func (biz *likeRestaurantBiz) LikeRestaurant(ctx context.Context, data *restaura
 		return restaurantlikemodel.ErrUserCannotLikeThisRestaurant(err)
 	}
 
-	if err := biz.increaseStore.IncreaseLikeCount(ctx, data.RestaurantId); err != nil {
-		log.Println("cannot increase like count ", err)
-	}
-
 	//side effect
-	job := asyncjob.NewJob(func(ctx context.Context) error {
-		return biz.increaseStore.IncreaseLikeCount(ctx, data.RestaurantId)
-	})
+	biz.pubSub.Publish(ctx, common.TopicUserLikeRestaurant, pubsub.NewMessage(data))
 
-	_ = asyncjob.NewGroup(true, job).Run(ctx)
+	//if err := biz.increaseStore.IncreaseLikeCount(ctx, data.RestaurantId); err != nil {
+	//	log.Println("cannot increase like count ", err)
+	//}
+
+	//job := asyncjob.NewJob(func(ctx context.Context) error {
+	//	return biz.increaseStore.IncreaseLikeCount(ctx, data.RestaurantId)
+	//})
+
+	//_ = asyncjob.NewGroup(true, job).Run(ctx)
 
 	//side effect increase like count
 	//go func() {

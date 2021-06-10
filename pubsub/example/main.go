@@ -3,13 +3,13 @@ package main
 import (
 	"context"
 	"go-food-delivery/pubsub"
-	"go-food-delivery/pubsub/pblocal"
+	"go-food-delivery/pubsub/pubsublocal"
 	"log"
 	"time"
 )
 
 func main() {
-	var localPb = pblocal.NewLocalPubSub()
+	var localPb = pubsublocal.NewLocalPubSub()
 
 	var orderTopic pubsub.Topic = "OrderCreated"
 

@@ -1,4 +1,4 @@
-package pblocal
+package pubsublocal
 
 import (
 	"context"
@@ -82,6 +82,7 @@ func (ps *localPubSub) run() error {
 	go func() {
 		for {
 			mess := <-ps.messageQueue
+			log.Println("Message dequeue:", mess)
 
 			if subs, ok := ps.mapChannel[mess.Topic()]; ok {
 				for i := range subs {

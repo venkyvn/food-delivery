@@ -19,6 +19,10 @@ func (RestaurantLike) TableName() string {
 	return "restaurant_likes"
 }
 
+func (l *RestaurantLike) GetRestaurantId() int {
+	return l.RestaurantId
+}
+
 func ErrUserAlreadyLikeThisRestaurant(err error) *common.AppError {
 	return common.NewCustomError(
 		err,
