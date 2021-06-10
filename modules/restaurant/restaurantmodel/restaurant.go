@@ -15,7 +15,7 @@ type Restaurant struct {
 	Addr            string             `json:"address" gorm:"column:addr;"`
 	Logo            *common.Image      `json:"logo" gorm:"column:logo;"`
 	Cover           *common.Images     `json:"cover" gorm:"column:cover;"`
-	LikedCount      int                `json:"liked_count" gorm:"-"`
+	LikedCount      int                `json:"like_count" gorm:"column:like_count;default:0"`
 }
 
 type RestaurantUpdate struct {

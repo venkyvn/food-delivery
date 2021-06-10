@@ -4,6 +4,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"go-food-delivery/common"
 	"go-food-delivery/component"
+	"go-food-delivery/modules/restaurant/restaurantstorage"
 	"go-food-delivery/modules/restaurantlike/biz"
 	"go-food-delivery/modules/restaurantlike/model"
 	"go-food-delivery/modules/restaurantlike/storage"
@@ -24,7 +25,8 @@ func UserLikeRestaurant(ctx component.AppContext) gin.HandlerFunc {
 		}
 
 		store := restaurantlikestorage.NewSqlStore(ctx.GetMainDBConnection())
-		biz := restaurantlikedbiz.NewUserLikeRestaurantBiz(store)
+		likeStore := restaurantstorage.NewSQLStore(ctx.GetMainDBConnection())
+		biz := restaurantlikedbiz.NewUserLikeRestaurantBiz(store, likeStore)
 
 		if err := biz.LikeRestaurant(c.Request.Context(), &data); err != nil {
 			panic(err)

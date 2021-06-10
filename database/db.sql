@@ -168,6 +168,7 @@ CREATE TABLE `restaurants` (
                                `owner_id` int NOT NULL,
                                `name` varchar(50) NOT NULL,
                                `addr` varchar(255) NOT NULL,
+                               `like_count` int default 0,
                                `city_id` int DEFAULT NULL,
                                `lat` double DEFAULT NULL,
                                `lng` double DEFAULT NULL,

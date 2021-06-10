@@ -4,6 +4,7 @@ import (
 	"context"
 	"go-food-delivery/common"
 	"go-food-delivery/modules/restaurantlike/model"
+	"log"
 )
 
 type UnlikeRestaurantStorage interface {
@@ -11,13 +12,19 @@ type UnlikeRestaurantStorage interface {
 	Delete(ctx context.Context, data *restaurantlikemodel.RestaurantLike) error
 }
 
-type unlikeRestaurantBiz struct {
-	store UnlikeRestaurantStorage
+type DecreaseLikeCountStorage interface {
+	DecreaseLikeCount(ctx context.Context, restaurantId int) error
 }
 
-func NewUnlikeRestaurantBiz(store UnlikeRestaurantStorage) *unlikeRestaurantBiz {
+type unlikeRestaurantBiz struct {
+	store         UnlikeRestaurantStorage
+	decreaseStore DecreaseLikeCountStorage
+}
+
+func NewUnlikeRestaurantBiz(store UnlikeRestaurantStorage, decreaseStore DecreaseLikeCountStorage) *unlikeRestaurantBiz {
 	return &unlikeRestaurantBiz{
-		store: store,
+		store:         store,
+		decreaseStore: decreaseStore,
 	}
 }
 
@@ -35,6 +42,11 @@ func (biz *unlikeRestaurantBiz) UnlikeRestaurant(ctx context.Context, data *rest
 
 	if err := biz.store.Delete(ctx, data); err != nil {
 		return restaurantlikemodel.ErrUserCannotUnLikeThisRestaurant(err)
+	}
+
+	// Side effect
+	if err := biz.decreaseStore.DecreaseLikeCount(ctx, data.RestaurantId); err != nil {
+		log.Println("cannot decrease like count of restaurant", err)
 	}
 
 	return nil

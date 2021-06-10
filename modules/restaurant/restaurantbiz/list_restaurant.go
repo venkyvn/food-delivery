@@ -4,7 +4,6 @@ import (
 	"context"
 	"go-food-delivery/common"
 	"go-food-delivery/modules/restaurant/restaurantmodel"
-	"log"
 )
 
 type ListRestaurantStorage interface {
@@ -54,17 +53,17 @@ func (biz *listRestaurantBiz) ListDataByCondition(
 		ids[i] = result[i].Id
 	}
 
-	resLikeMap, err := biz.restaurantLikeStore.FetchRestaurantLike(ctx, ids)
+	//resLikeMap, err := biz.restaurantLikeStore.FetchRestaurantLike(ctx, ids)
 
-	if err != nil {
-		log.Printf("cannot fetch restaurant like")
-	}
-
-	if resLikeMap != nil {
-		for i := range result {
-			result[i].LikedCount = resLikeMap[result[i].Id]
-		}
-	}
+	//if err != nil {
+	//	log.Printf("cannot fetch restaurant like")
+	//}
+	//
+	//if resLikeMap != nil {
+	//	for i := range result {
+	//		result[i].LikedCount = resLikeMap[result[i].Id]
+	//	}
+	//}
 
 	return result, nil
 }
