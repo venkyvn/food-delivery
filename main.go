@@ -46,7 +46,10 @@ func runService(db *gorm.DB, provider uploadprovider.UploadProvider, secretKey s
 
 	pubSub := pubsublocal.NewLocalPubSub()
 	appCtx := component.NewAppContext(db, provider, secretKey, pubSub)
-	subscriber.Setup(appCtx)
+	//subscriber.Setup(appCtx)
+	if err := subscriber.NewEngine(appCtx).Start(); err != nil {
+		log.Fatal(err)
+	}
 
 	r := gin.Default()
 	r.Use(middleware.Recover(appCtx))

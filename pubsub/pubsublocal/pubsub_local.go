@@ -35,7 +35,7 @@ func (ps *localPubSub) Publish(ctx context.Context, topic pubsub.Topic, data *pu
 	go func() {
 		defer common.AppRecover()
 		ps.messageQueue <- data
-		log.Println("New event published: ", data.String(), " with data ", data.Data())
+		log.Println("New event published:", data.String(), "with data", data.Data())
 	}()
 
 	return nil

@@ -5,6 +5,7 @@ import (
 	"go-food-delivery/common"
 	"go-food-delivery/component"
 	"go-food-delivery/modules/restaurant/restaurantstorage"
+	"go-food-delivery/pubsub"
 )
 
 type HasRestaurantId interface {
@@ -23,4 +24,25 @@ func IncreaseLikeCountAfterUserLikeRestaurant(appContext component.AppContext, c
 			_ = store.IncreaseLikeCount(context, likeData.GetRestaurantId())
 		}
 	}()
+}
+
+// I wish i could do something like that
+//func RunIncreaseLikeAfterUserLikeRestaurant(appContext component.AppContext) func(ctx context.Context, message *pubsub.Message) error {
+//	store := restaurantstorage.NewSQLStore(appContext.GetMainDBConnection())
+//
+//	return func(ctx context.Context, message *pubsub.Message) error {
+//		likeData := message.Data().(HasRestaurantId)
+//		return store.IncreaseLikeCount(ctx, likeData.GetRestaurantId())
+//	}
+//}
+
+func RunIncreaseLikeCountAfterUserLikeRestaurant(appContext component.AppContext) consumerJob {
+	return consumerJob{
+		Title: "Increase Like After User Like Restaurant",
+		Handler: func(ctx context.Context, message *pubsub.Message) error {
+			store := restaurantstorage.NewSQLStore(appContext.GetMainDBConnection())
+			likeData := message.Data().(HasRestaurantId)
+			return store.IncreaseLikeCount(ctx, likeData.GetRestaurantId())
+		},
+	}
 }
