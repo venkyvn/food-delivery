@@ -6,10 +6,12 @@ import (
 	"go-food-delivery/component"
 	"go-food-delivery/modules/restaurant/restaurantstorage"
 	"go-food-delivery/pubsub"
+	"go-food-delivery/skio"
 )
 
 type HasRestaurantId interface {
 	GetRestaurantId() int
+	GetUserId() int
 }
 
 func IncreaseLikeCountAfterUserLikeRestaurant(appContext component.AppContext, context context.Context) {
@@ -43,6 +45,16 @@ func RunIncreaseLikeCountAfterUserLikeRestaurant(appContext component.AppContext
 			store := restaurantstorage.NewSQLStore(appContext.GetMainDBConnection())
 			likeData := message.Data().(HasRestaurantId)
 			return store.IncreaseLikeCount(ctx, likeData.GetRestaurantId())
+		},
+	}
+}
+
+func EmitRealTimeAfterUserLikeRestaurant(rtEngine skio.RealtimeEngine) consumerJob {
+	return consumerJob{
+		Title: "Emit real time after User Like Restaurant",
+		Handler: func(ctx context.Context, message *pubsub.Message) error {
+			likeData := message.Data().(HasRestaurantId)
+			return rtEngine.EmitToUser(likeData.GetUserId(), string(message.Topic()), likeData)
 		},
 	}
 }
